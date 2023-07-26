@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Form</title>
+    <!-- Include Vue 3 and Bootstrap CDNs -->
+    <script src="https://unpkg.com/vue@next"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+    />
+    <!-- Include Font Awesome CDN for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <style>
+      .profile-photo {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+      .form-container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .table-bordered {
+        border: 1px solid #dee2e6;
+        border-collapse: collapse;
+      }
+      .table-bordered th,
+      .table-bordered td {
+        border: 1px solid #dee2e6;
+        padding: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <div class="row justify-content-center mt-5">
+          <div class="col-lg-4">
+            <div class="card">
+              <div class="card-header">
+                <h2 class="text-center">Record Book</h2>
+              </div>
+              <div class="card-body form-container" v-show="showForm">
+                <form @submit.prevent="handleSubmit">
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <input
+                      type="text"
+                      id="name"
+                      class="form-control"
+                      v-model="formData.name"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="startDate" class="form-label"
+                      >Start Date:</label
+                    >
+                    <input
+                      type="date"
+                      id="startDate"
+                      class="form-control"
+                      v-model="formData.startDate"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="endDate" class="form-label">End Date:</label>
+                    <input
+                      type="date"
+                      id="endDate"
+                      class="form-control"
+                      v-model="formData.endDate"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="photoLink" class="form-label"
+                      >Profile Photo Link:</label
+                    >
+                    <input
+                      type="text"
+                      id="photoLink"
+                      class="form-control"
+                      v-model="formData.photoLink"
+                    />
+                  </div>
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                    <button
+                      type="button"
+                      class="btn btn-danger"
+                      @click="clearAllData"
+                    >
+                      Clear All
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <div class="card-footer" v-show="!showForm">
+                <button class="btn btn-primary" @click="toggleForm">Add</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-8">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Acc No.</th>
+                  <th>Profile</th>
+                  <th>Name</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Tenure</th>
+                  <th>Delete</th>
+                  <th>Edit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="account in accounts" :key="account.accountNumber">
+                  <td>{{ account.accountNumber }}</td>
+                  <td>
+                    <img
+                      :src="account.photoLink || getDefaultProfileIcon()"
+                      class="profile-photo"
+                      alt="Profile"
+                    />
+                  </td>
+                  <td>{{ account.name }}</td>
+                  <td>{{ account.startDate }}</td>
+                  <td>{{ account.endDate }}</td>
+                  <td>{{ account.tenure }}</td>
+                  <td>
+                    <i
+                      class="fas fa-trash-alt delete-icon"
+                      @click="handleDelete(account)"
+                    ></i>
+                  </td>
+                  <td>
+                    <i
+                      class="fas fa-edit edit-icon"
+                      @click="handleEdit(account)"
+                    ></i>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const app = Vue.createApp({
+        data() {
+          return {
+            formData: {
+              name: "",
+              startDate: "",
+              endDate: "",
+              photoLink: "",
+            },
+            accounts: [
+              {
+                accountNumber: 1,
+                name: "Sanket",
+                startDate: "2023-01-10",
+                endDate: "2023-06-28",
+                tenure: "",
+                photoLink:
+                  "https://media.licdn.com/dms/image/D4D03AQFYZ7vqF5D0Rw/profile-displayphoto-shrink_800_800/0/1678117088962?e=2147483647&v=beta&t=wcuUtpB6LVbQkBg_9PBK2ZyRyvrgWP6pYWtLQbX3jEQ",
+              },
+              {
+                accountNumber: 2,
+                name: "Roshan",
+                startDate: "2023-05-15",
+                endDate: "2023-06-28",
+                tenure: "",
+                photoLink:
+                  "https://media.licdn.com/dms/image/C4E03AQEd1hSmTCalQQ/profile-displayphoto-shrink_800_800/0/1658984964367?e=2147483647&v=beta&t=hroajOkJfo50xODaJP25n44_oZUBTsNIfFbY-W8MlTg",
+              },
+              {
+                accountNumber: 3,
+                name: "Chandru",
+                startDate: "2022-10-20",
+                endDate: "2023-01-05",
+                tenure: "",
+                photoLink:
+                  "https://media.licdn.com/dms/image/D4D03AQGlFMeeH6pQlA/profile-displayphoto-shrink_800_800/0/1681624744052?e=2147483647&v=beta&t=CxgaQpMtwJILe9imu1cw7EcnYmEt7pPKiJhLhskz23Q",
+              },
+            ],
+            showForm: false,
+          };
+        },
+        computed: {
+          accounts() {
+            return this.accounts.sort(
+              (a, b) => a.accountNumber - b.accountNumber
+            );
+          },
+        },
+        methods: {
+          calculateTenure(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const timeDiff = Math.abs(end - start);
+            const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            return `${days} days`;
+          },
+          updateTable() {
+            this.saveAccounts();
+          },
+
+          handleSubmit() {
+            const { name, startDate, endDate, photoLink } = this.formData;
+            const account = {
+              accountNumber: this.accounts.length + 1, // Increment the account number based on the array length
+              name,
+              startDate,
+              endDate,
+              tenure: this.calculateTenure(startDate, endDate),
+              photoLink,
+            };
+            this.accounts.push(account);
+            this.saveAccounts();
+            this.formData = {
+              name: "",
+              startDate: "",
+              endDate: "",
+              photoLink: "",
+            };
+            this.toggleForm();
+          },
+
+          handleDelete(account) {
+            this.accounts = this.accounts.filter((item) => item !== account);
+            this.saveAccounts();
+          },
+          handleEdit(account) {
+            const index = this.accounts.findIndex((item) => item === account);
+            if (index !== -1) {
+              this.formData = {
+                name: account.name,
+                startDate: account.startDate,
+                endDate: account.endDate,
+                photoLink: account.photoLink,
+              };
+              this.showForm = true;
+              // Remove the account from the array without changing its position
+              this.accounts.splice(index, 1);
+            }
+          },
+          clearAllData() {
+            this.accounts = [];
+            this.saveAccounts();
+          },
+          getDefaultProfileIcon() {
+            return "https://via.placeholder.com/50";
+          },
+          toggleForm() {
+            this.showForm = !this.showForm;
+          },
+        },
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>
